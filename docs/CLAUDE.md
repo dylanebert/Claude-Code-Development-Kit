@@ -8,7 +8,7 @@
 
 ## 2. Project Structure
 
-**⚠️ CRITICAL: AI agents MUST read the [Project Structure documentation](/docs/ai-context/project-structure.md) before attempting any task to understand the complete technology stack, file tree and project organization.**
+**⚠️ CRITICAL: Always read the [Project Structure documentation](/docs/ai-context/project-structure.md) before attempting any task to understand the complete technology stack, file tree and project organization.**
 
 [Project Name] follows a [describe architecture pattern]. For the complete tech stack and file tree structure, see [docs/ai-context/project-structure.md](/docs/ai-context/project-structure.md).
 
@@ -129,57 +129,7 @@ def calculate_similarity(text1: str, text2: str) -> float:
   - Error: `{ "data": null, "error": {"message": "...", "code": "..."} }`
 
 
-## 4. Multi-Agent Workflows & Context Injection
-
-### Automatic Context Injection for Sub-Agents
-When using the Task tool to spawn sub-agents, the core project context (CLAUDE.md, project-structure.md, docs-overview.md) is automatically injected into their prompts via the subagent-context-injector hook. This ensures all sub-agents have immediate access to essential project documentation without the need of manual specification in each Task prompt.
-
-
-## 5. MCP Server Integrations
-
-### Gemini Consultation Server
-**When to use:**
-- Complex coding problems requiring deep analysis or multiple approaches
-- Code reviews and architecture discussions
-- Debugging complex issues across multiple files
-- Performance optimization and refactoring guidance
-- Detailed explanations of complex implementations
-- Highly security relevant tasks
-
-**Automatic Context Injection:**
-- The kit's `gemini-context-injector.sh` hook automatically includes two key files for new sessions:
-  - `/docs/ai-context/project-structure.md` - Complete project structure and tech stack
-  - `/MCP-ASSISTANT-RULES.md` - Your project-specific coding standards and guidelines
-- This ensures Gemini always has comprehensive understanding of your technology stack, architecture, and project standards
-
-**Usage patterns:**
-```python
-# New consultation session (project structure auto-attached by hooks)
-mcp__gemini__consult_gemini(
-    specific_question="How should I optimize this voice pipeline?",
-    problem_description="Need to reduce latency in real-time audio processing",
-    code_context="Current pipeline processes audio sequentially...",
-    attached_files=[
-        "src/core/pipelines/voice_pipeline.py"  # Your specific files
-    ],
-    preferred_approach="optimize"
-)
-
-# Follow-up in existing session
-mcp__gemini__consult_gemini(
-    specific_question="What about memory usage?",
-    session_id="session_123",
-    additional_context="Implemented your suggestions, now seeing high memory usage"
-)
-```
-
-**Key capabilities:**
-- Persistent conversation sessions with context retention
-- File attachment and caching for multi-file analysis
-- Specialized assistance modes (solution, review, debug, optimize, explain)
-- Session management for complex, multi-step problems
-
-**Important:** Treat Gemini's responses as advisory feedback. Evaluate the suggestions critically, incorporate valuable insights into your solution, then proceed with your implementation.
+## 4. External Documentation (Optional)
 
 ### Context7 Documentation Server
 **Repository**: [Context7 MCP Server](https://github.com/upstash/context7)
@@ -211,7 +161,7 @@ mcp__context7__get_library_docs(
 
 
 
-## 6. Post-Task Completion Protocol
+## 5. Post-Task Completion Protocol
 After completing any coding task, follow this checklist:
 
 ### 1. Type Safety & Quality Checks

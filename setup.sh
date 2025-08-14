@@ -3,7 +3,7 @@
 # Claude Code Development Kit Setup Script
 # 
 # This script installs the Claude Code Development Kit into a target project,
-# providing automated context management and multi-agent workflows for Claude Code.
+# providing automated context management for Claude Code.
 
 set -euo pipefail
 
@@ -21,10 +21,6 @@ NC='\033[0m' # No Color
 # Configuration variables
 TARGET_DIR=""
 INSTALL_CONTEXT7="n"
-INSTALL_GEMINI="n"
-INSTALL_NOTIFICATIONS="n"
-OS=""
-AUDIO_PLAYER=""
 OVERWRITE_ALL="n"
 SKIP_ALL="n"
 
@@ -151,7 +147,7 @@ check_claude_code() {
 check_required_tools() {
     local missing_tools=()
     
-    for tool in jq grep cat mkdir cp chmod; do
+    for tool in grep cat mkdir cp; do
         if ! command -v "$tool" &> /dev/null; then
             missing_tools+=("$tool")
         fi
@@ -161,50 +157,18 @@ check_required_tools() {
         print_color "$RED" "❌ Missing required tools: ${missing_tools[*]}"
         echo
         echo "These tools are needed for:"
-        echo "  • jq     - Parse and generate JSON configuration files"
         echo "  • grep   - Search and filter file contents"
         echo "  • cat    - Read and display files"
         echo "  • mkdir  - Create directory structure"
         echo "  • cp     - Copy framework files"
-        echo "  • chmod  - Set executable permissions on scripts"
         echo
-        echo "On macOS: Most are pre-installed, install jq with: brew install jq"
+        echo "On macOS: These are pre-installed"
         echo "On Ubuntu/Debian: sudo apt-get install ${missing_tools[*]}"
         echo "On other systems: Use your package manager to install these tools"
         exit 1
     fi
     
     print_color "$GREEN" "✓ All required tools are available"
-}
-
-# Detect operating system
-detect_os() {
-    case "$(uname -s)" in
-        Darwin*)
-            OS="macOS"
-            AUDIO_PLAYER="afplay"
-            ;;
-        Linux*)
-            OS="Linux"
-            # Check for available audio players
-            for player in paplay aplay pw-play play ffplay; do
-                if command -v "$player" &> /dev/null; then
-                    AUDIO_PLAYER="$player"
-                    break
-                fi
-            done
-            ;;
-        MINGW*|MSYS*|CYGWIN*)
-            OS="Windows"
-            AUDIO_PLAYER="powershell"
-            ;;
-        *)
-            OS="Unknown"
-            AUDIO_PLAYER=""
-            ;;
-    esac
-    
-    print_color "$GREEN" "✓ Detected OS: $OS"
 }
 
 # Get target directory
@@ -248,35 +212,12 @@ prompt_optional_components() {
     echo
     
     # Context7 MCP
-    print_color "$CYAN" "Context7 MCP Server (Highly Recommended)"
+    print_color "$CYAN" "Context7 MCP Server (Recommended)"
     echo "  Provides up-to-date documentation for external libraries (React, FastAPI, etc.)"
     if ! safe_read_yn INSTALL_CONTEXT7 "  Install Context7 integration? (y/n): "; then
         exit 1
     fi
     echo
-    
-    # Gemini MCP
-    print_color "$CYAN" "Gemini Assistant MCP Server (Highly Recommended)"
-    echo "  Enables architectural consultation and advanced code review capabilities"
-    if ! safe_read_yn INSTALL_GEMINI "  Install Gemini integration? (y/n): "; then
-        exit 1
-    fi
-    echo
-    
-    # Notifications
-    print_color "$CYAN" "Notification System (Convenience Feature)"
-    echo "  Plays audio alerts when tasks complete or input is needed"
-    if ! safe_read_yn INSTALL_NOTIFICATIONS "  Set up notification hooks? (y/n): "; then
-        exit 1
-    fi
-    
-    # Only detect OS if notifications are enabled
-    if [ "$INSTALL_NOTIFICATIONS" = "y" ]; then
-        detect_os
-        if [ -z "$AUDIO_PLAYER" ] && [ "$OS" = "Linux" ]; then
-            print_color "$YELLOW" "⚠️  No audio player found. Install one of: paplay, aplay, pw-play, play, ffplay"
-        fi
-    fi
 }
 
 # Create directory structure
@@ -285,16 +226,9 @@ create_directories() {
     
     # Main directories
     mkdir -p "$TARGET_DIR/.claude/commands"
-    mkdir -p "$TARGET_DIR/.claude/hooks/config"
     mkdir -p "$TARGET_DIR/docs/ai-context"
     mkdir -p "$TARGET_DIR/docs/open-issues"
     mkdir -p "$TARGET_DIR/docs/specs"
-    mkdir -p "$TARGET_DIR/logs"
-    
-    # Only create sounds directory if notifications are enabled
-    if [ "$INSTALL_NOTIFICATIONS" = "y" ]; then
-        mkdir -p "$TARGET_DIR/.claude/hooks/sounds"
-    fi
     
     print_color "$GREEN" "✓ Directory structure created"
 }
@@ -374,94 +308,15 @@ copy_framework_files() {
     print_color "$YELLOW" "Copying framework files..."
     echo
     
-    # Copy commands
+    # Copy commands (excluding gemini-consult.md)
     if [ -d "$SCRIPT_DIR/commands" ]; then
         for cmd in "$SCRIPT_DIR/commands/"*.md; do
             if [ -f "$cmd" ]; then
                 basename_cmd="$(basename "$cmd")"
-                # Skip gemini-consult.md unless Gemini is selected
-                if [ "$basename_cmd" = "gemini-consult.md" ] && [ "$INSTALL_GEMINI" != "y" ]; then
-                    continue
-                fi
                 dest="$TARGET_DIR/.claude/commands/$basename_cmd"
                 copy_with_check "$cmd" "$dest" "Command template"
             fi
         done
-    fi
-    
-    # Copy hooks based on user selections
-    if [ -d "$SCRIPT_DIR/hooks" ]; then
-        # Always copy subagent context injector (core feature)
-        if [ -f "$SCRIPT_DIR/hooks/subagent-context-injector.sh" ]; then
-            copy_with_check "$SCRIPT_DIR/hooks/subagent-context-injector.sh" \
-                          "$TARGET_DIR/.claude/hooks/subagent-context-injector.sh" \
-                          "Hook script (core feature)"
-        fi
-        
-        # Copy MCP security scanner if any MCP server is selected
-        if [ "$INSTALL_CONTEXT7" = "y" ] || [ "$INSTALL_GEMINI" = "y" ]; then
-            if [ -f "$SCRIPT_DIR/hooks/mcp-security-scan.sh" ]; then
-                copy_with_check "$SCRIPT_DIR/hooks/mcp-security-scan.sh" \
-                              "$TARGET_DIR/.claude/hooks/mcp-security-scan.sh" \
-                              "MCP security scanner hook"
-            fi
-        fi
-        
-        # Copy Gemini context injector if Gemini is selected
-        if [ "$INSTALL_GEMINI" = "y" ]; then
-            if [ -f "$SCRIPT_DIR/hooks/gemini-context-injector.sh" ]; then
-                copy_with_check "$SCRIPT_DIR/hooks/gemini-context-injector.sh" \
-                              "$TARGET_DIR/.claude/hooks/gemini-context-injector.sh" \
-                              "Gemini context injector hook"
-            fi
-        fi
-        
-        # Copy notification hook and sounds if notifications are selected
-        if [ "$INSTALL_NOTIFICATIONS" = "y" ]; then
-            if [ -f "$SCRIPT_DIR/hooks/notify.sh" ]; then
-                copy_with_check "$SCRIPT_DIR/hooks/notify.sh" \
-                              "$TARGET_DIR/.claude/hooks/notify.sh" \
-                              "Notification hook"
-            fi
-            
-            # Copy sounds with conflict handling
-            if [ -d "$SCRIPT_DIR/hooks/sounds" ]; then
-                for sound in "$SCRIPT_DIR/hooks/sounds/"*; do
-                    if [ -f "$sound" ]; then
-                        dest="$TARGET_DIR/.claude/hooks/sounds/$(basename "$sound")"
-                        copy_with_check "$sound" "$dest" "Notification sound"
-                    fi
-                done
-            fi
-        fi
-        
-        # Copy config files with conflict handling
-        if [ -d "$SCRIPT_DIR/hooks/config" ]; then
-            for config in "$SCRIPT_DIR/hooks/config/"*; do
-                if [ -f "$config" ]; then
-                    dest="$TARGET_DIR/.claude/hooks/config/$(basename "$config")"
-                    copy_with_check "$config" "$dest" "Configuration file"
-                fi
-            done
-        fi
-        
-        # Copy README for reference
-        if [ -f "$SCRIPT_DIR/hooks/README.md" ]; then
-            copy_with_check "$SCRIPT_DIR/hooks/README.md" \
-                          "$TARGET_DIR/.claude/hooks/README.md" \
-                          "Hooks documentation"
-        fi
-        
-        # Copy setup files
-        if [ -d "$SCRIPT_DIR/hooks/setup" ]; then
-            mkdir -p "$TARGET_DIR/.claude/hooks/setup"
-            for setup_file in "$SCRIPT_DIR/hooks/setup/"*; do
-                if [ -f "$setup_file" ]; then
-                    dest="$TARGET_DIR/.claude/hooks/setup/$(basename "$setup_file")"
-                    copy_with_check "$setup_file" "$dest" "Setup file"
-                fi
-            done
-        fi
     fi
     
     # Copy documentation structure
@@ -527,193 +382,22 @@ copy_framework_files() {
         fi
     fi
     
-    # Create MCP-ASSISTANT-RULES.md from template if Gemini is selected
-    if [ "$INSTALL_GEMINI" = "y" ]; then
-        if [ ! -f "$TARGET_DIR/MCP-ASSISTANT-RULES.md" ] && [ -f "$SCRIPT_DIR/docs/MCP-ASSISTANT-RULES.md" ]; then
-            cp "$SCRIPT_DIR/docs/MCP-ASSISTANT-RULES.md" "$TARGET_DIR/MCP-ASSISTANT-RULES.md"
-            print_color "$GREEN" "✓ Created MCP-ASSISTANT-RULES.md from template"
-        else
-            if [ -f "$TARGET_DIR/MCP-ASSISTANT-RULES.md" ]; then
-                print_color "$YELLOW" "→ Preserved existing MCP-ASSISTANT-RULES.md"
-            fi
-        fi
-    else
-        print_color "$YELLOW" "→ Skipped MCP-ASSISTANT-RULES.md (Gemini not selected)"
-    fi
-    
     print_color "$GREEN" "✓ Framework files copied"
 }
 
-# Set executable permissions
-set_permissions() {
-    print_color "$YELLOW" "Setting file permissions..."
-    
-    # Make only copied shell scripts executable
-    if [ -d "$TARGET_DIR/.claude/hooks" ]; then
-        for script in "$TARGET_DIR/.claude/hooks/"*.sh; do
-            if [ -f "$script" ]; then
-                chmod +x "$script"
-            fi
-        done
-    fi
-    
-    print_color "$GREEN" "✓ Permissions set"
-}
-
-# Generate configuration file
-generate_config() {
-    print_color "$YELLOW" "Generating configuration..."
-    
-    local config_file="$TARGET_DIR/.claude/settings.local.json"
-    
-    # Start building the configuration with new hooks format
-    cat > "$config_file" << EOF
-{
-  "hooks": {
-EOF
-
-    # PreToolUse hooks
-    local pretooluse_hooks=()
-    
-    # Security scan hook for MCP tools
-    if [ "$INSTALL_CONTEXT7" = "y" ] || [ "$INSTALL_GEMINI" = "y" ]; then
-        pretooluse_hooks+=("mcp-security")
-    fi
-    
-    # Gemini context injector
-    if [ "$INSTALL_GEMINI" = "y" ]; then
-        pretooluse_hooks+=("gemini-context")
-    fi
-    
-    # Always add sub-agent context injector
-    pretooluse_hooks+=("subagent-context")
-    
-    # Write PreToolUse hooks
-    if [ ${#pretooluse_hooks[@]} -gt 0 ]; then
-        cat >> "$config_file" << EOF
-    "PreToolUse": [
-EOF
-        
-        local first_hook=true
-        
-        # MCP security scanner
-        if [[ " ${pretooluse_hooks[@]} " =~ " mcp-security " ]]; then
-            [ "$first_hook" = false ] && echo "," >> "$config_file"
-            cat >> "$config_file" << EOF
-      {
-        "matcher": "mcp__",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $TARGET_DIR/.claude/hooks/mcp-security-scan.sh"
-          }
-        ]
-      }
-EOF
-            first_hook=false
-        fi
-        
-        # Gemini context injector
-        if [[ " ${pretooluse_hooks[@]} " =~ " gemini-context " ]]; then
-            [ "$first_hook" = false ] && echo "," >> "$config_file"
-            cat >> "$config_file" << EOF
-      {
-        "matcher": "mcp__gemini",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $TARGET_DIR/.claude/hooks/gemini-context-injector.sh"
-          }
-        ]
-      }
-EOF
-            first_hook=false
-        fi
-        
-        # Sub-agent context injector
-        [ "$first_hook" = false ] && echo "," >> "$config_file"
-        cat >> "$config_file" << EOF
-      {
-        "matcher": "Task",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $TARGET_DIR/.claude/hooks/subagent-context-injector.sh"
-          }
-        ]
-      }
-EOF
-        
-        cat >> "$config_file" << EOF
-    ]
-EOF
-    fi
-    
-    # Add notification hooks if enabled
-    if [ "$INSTALL_NOTIFICATIONS" = "y" ]; then
-        [ ${#pretooluse_hooks[@]} -gt 0 ] && echo "," >> "$config_file"
-        cat >> "$config_file" << EOF
-    "Notification": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $TARGET_DIR/.claude/hooks/notify.sh input"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $TARGET_DIR/.claude/hooks/notify.sh complete"
-          }
-        ]
-      }
-    ]
-EOF
-    fi
-    
-    cat >> "$config_file" << EOF
-
-  }
-}
-EOF
-    
-    print_color "$GREEN" "✓ Configuration generated: $config_file"
-}
-
-# Display MCP server information
-display_mcp_info() {
-    if [ "$INSTALL_CONTEXT7" = "y" ] || [ "$INSTALL_GEMINI" = "y" ]; then
+# Display Context7 MCP server information
+display_context7_info() {
+    if [ "$INSTALL_CONTEXT7" = "y" ]; then
         echo
-        print_color "$BLUE" "=== MCP Server Setup (Required) ==="
+        print_color "$BLUE" "=== Context7 MCP Server Setup (Optional) ==="
         echo
-        echo "To complete the setup, you need to install the MCP servers you selected:"
+        echo "To use Context7 MCP integration, you need to install the Context7 MCP server:"
         echo
-        
-        if [ "$INSTALL_CONTEXT7" = "y" ]; then
-            print_color "$YELLOW" "Context7 MCP Server:"
-            echo "  Repository: https://github.com/upstash/context7"
-            echo "  Documentation: See the Context7 README for setup instructions"
-            echo
-        fi
-        
-        if [ "$INSTALL_GEMINI" = "y" ]; then
-            print_color "$YELLOW" "Gemini MCP Server:"
-            echo "  Repository: https://github.com/peterkrueck/mcp-gemini-assistant"
-            echo "  Documentation: See the MCP Gemini Assistant README for setup instructions"
-            echo
-        fi
-        
-        echo "After installing the MCP servers, add their configuration to:"
-        print_color "$BLUE" "  $TARGET_DIR/.claude/settings.local.json"
+        print_color "$YELLOW" "Context7 MCP Server:"
+        echo "  Repository: https://github.com/upstash/context7"
+        echo "  Documentation: See the Context7 README for setup instructions"
         echo
-        echo "Add a 'mcpServers' section with the appropriate server configurations."
+        echo "After installing Context7, add its configuration to your Claude Code settings."
     fi
 }
 
@@ -724,42 +408,18 @@ show_next_steps() {
     echo
     print_color "$YELLOW" "Next Steps:"
     echo
-    local step_num=1
     
-    echo "${step_num}. Customize your project context:"
+    echo "1. Customize your project context:"
     echo "   - Edit: $TARGET_DIR/CLAUDE.md"
     echo "   - Update project structure in: $TARGET_DIR/docs/ai-context/project-structure.md"
     echo
-    ((step_num++))
     
-    if [ "$INSTALL_GEMINI" = "y" ]; then
-        echo "${step_num}. Set your coding standards for Gemini:"
-        echo "   - Edit: $TARGET_DIR/MCP-ASSISTANT-RULES.md"
-        echo
-        ((step_num++))
-    fi
-    
-    if [ "$INSTALL_CONTEXT7" = "y" ] || [ "$INSTALL_GEMINI" = "y" ]; then
-        echo "${step_num}. Configure security patterns:"
-        echo "   - Edit: $TARGET_DIR/.claude/hooks/config/sensitive-patterns.json"
-        echo
-        ((step_num++))
-    fi
-    
-    echo "${step_num}. Test your installation:"
+    echo "2. Test your installation:"
     echo "   - Run: claude"
     echo "   - Then: /full-context \"analyze my project structure\""
     echo
-    ((step_num++))
     
-    if [ "$INSTALL_NOTIFICATIONS" = "y" ]; then
-        echo "${step_num}. Test notifications:"
-        echo "   - Run: bash $TARGET_DIR/.claude/hooks/notify.sh"
-        echo
-        ((step_num++))
-    fi
-    
-    echo "${step_num}. Documentation Templates:"
+    echo "3. Documentation Templates:"
     print_color "$CYAN" "   The framework includes documentation templates:"
     echo "   - $TARGET_DIR/docs/CONTEXT-tier2-component.md"
     echo "   - $TARGET_DIR/docs/CONTEXT-tier3-feature.md"
@@ -771,7 +431,6 @@ show_next_steps() {
     
     print_color "$BLUE" "For documentation and examples, see:"
     echo "  - Commands: $TARGET_DIR/.claude/commands/README.md"
-    echo "  - Hooks: $TARGET_DIR/.claude/hooks/README.md"
     echo "  - Docs: $TARGET_DIR/docs/README.md"
 }
 
@@ -804,11 +463,9 @@ main() {
     # Perform installation
     create_directories
     copy_framework_files
-    set_permissions
-    generate_config
     
     # Show completion information
-    display_mcp_info
+    display_context7_info
     show_next_steps
 }
 

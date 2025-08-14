@@ -1,6 +1,6 @@
 # Documentation Architecture
 
-This project uses a **3-tier documentation system** that organizes knowledge by stability and scope, enabling efficient AI context loading and scalable development.
+This project uses a **3-tier documentation system** that organizes knowledge by stability and scope, enabling efficient context loading and scalable development.
 
 ## How the 3-Tier System Works
 
@@ -10,17 +10,17 @@ This project uses a **3-tier documentation system** that organizes knowledge by 
 
 **Tier 3 (Feature-Specific)**: Granular documentation co-located with code - specific implementation patterns, technical details, and local architectural decisions that evolve with features.
 
-This hierarchy allows AI agents to load targeted context efficiently while maintaining a stable foundation of core knowledge.
+This hierarchy allows targeted context loading efficiently while maintaining a stable foundation of core knowledge.
 
 ## Documentation Principles
 - **Co-location**: Documentation lives near relevant code
 - **Smart Extension**: New documentation files created automatically when warranted
-- **AI-First**: Optimized for efficient AI context loading and machine-readable patterns
+- **Structured**: Optimized for efficient context loading and clear patterns
 
 ## Tier 1: Foundational Documentation (System-Wide)
 
-- **[Master Context](/CLAUDE.md)** - *Essential for every session.* Coding standards, security requirements, MCP server integration patterns, and development protocols
-- **[Project Structure](/docs/ai-context/project-structure.md)** - *REQUIRED reading.* Complete technology stack, file tree, and system architecture. Must be attached to Gemini consultations
+- **[Master Context](/CLAUDE.md)** - *Essential for every session.* Coding standards, security requirements, external service integration patterns, and development protocols
+- **[Project Structure](/docs/ai-context/project-structure.md)** - *REQUIRED reading.* Complete technology stack, file tree, and system architecture
 - **[System Integration](/docs/ai-context/system-integration.md)** - *For cross-component work.* Communication patterns, data flow, testing strategies, and performance optimization
 - **[Deployment Infrastructure](/docs/ai-context/deployment-infrastructure.md)** - *Infrastructure patterns.* Containerization, monitoring, CI/CD workflows, and scaling strategies
 - **[Task Management](/docs/ai-context/handoff.md)** - *Session continuity.* Current tasks, documentation system progress, and next session goals

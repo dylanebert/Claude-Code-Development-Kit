@@ -1,15 +1,14 @@
 # Claude Code Development Kit
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Changelog](https://img.shields.io/badge/changelog-v2.1.0-orange.svg)](CHANGELOG.md)
 
-An integrated system that transforms Claude Code into an orchestrated development environment through automated documentation management, multi-agent workflows, and external AI expertise.
+An integrated system that provides automated context management for Claude Code through structured documentation and command templates.
 
 > **Related**: Check out [Freigeist](https://www.freigeist.dev) - upcoming AI coding platform for complex projects!
 
 ## Why Claude Code?
 
-Claude Code's Sub-Agents enable this highly automated, integrated approach. While other AI tools can likely use the documentation structure (see FAQ) and some commands, only Claude Code can currently orchestrate parallel agents and use this Development Kit to its full potential.
+Claude Code's powerful context management capabilities make it ideal for this automated, integrated approach. The documentation structure and command templates work seamlessly with Claude Code's workflow management.
 
 ## 🎯 Why This Kit?
 
@@ -29,10 +28,10 @@ Claude Code's output quality directly depends on what it knows about your projec
 ```
 
 **The Solution:**
-✅ **Automated context delivery** through two integrated systems:
+✅ **Automated context delivery** through integrated systems:
 - **3-tier documentation system** - Auto-loads the right docs at the right time
-- **Custom commands with sub-agents** - Orchestrates specialized agents that already know your project
-- Result: No manual context loading, consistent knowledge across all agents
+- **Custom commands** - Provides structured workflows that leverage your project context
+- Result: No manual context loading, consistent knowledge across all sessions
 
 ---
 
@@ -46,12 +45,11 @@ Claude Code's output quality directly depends on what it knows about your projec
 ```
 
 **The Solution:**
-✅ **"Four eyes principle"** through MCP integration:
+✅ **Current documentation** through MCP integration:
 
 | Service | Purpose | Benefit |
 |---------|---------|---------|
 | **Context7** | Real-time library docs | Current APIs, not training data |
-| **Gemini** | Architecture consultation | Cross-validation & best practices |
 
 *Result: Fewer errors, better code, current standards*
 
@@ -67,17 +65,16 @@ Claude Code's output quality directly depends on what it knows about your projec
 ```
 
 **The Solution:**
-✅ **Intelligent automation** through hooks and commands:
+✅ **Intelligent automation** through command templates:
 - Automatic updates of documentation through custom commands
-- Context injection for all Sub-agents and Gemini MCP calls 
-- Audio notifications for task completion (optional)
-- One-command workflows for complex tasks
+- Structured workflows for complex tasks
+- Context-aware command execution
 
 ---
 
 ### 🎉 The Result
 
-> **Claude Code transforms from a helpful tool into a reliable development partner that remembers your project context, validates its own work, and handles the tedious stuff automatically.**
+> **Claude Code transforms from a helpful tool into a reliable development partner that remembers your project context and provides structured workflows for complex tasks.**
 
 
 [![Demo-Video auf YouTube](https://img.youtube.com/vi/kChalBbMs4g/0.jpg)](https://youtu.be/kChalBbMs4g)
@@ -90,7 +87,7 @@ Claude Code's output quality directly depends on what it knows about your projec
 ### Prerequisites
 
 - **Required**: [Claude Code](https://github.com/anthropics/claude-code)
-- **Recommended**: MCP servers like [Context7](https://github.com/upstash/context7) and [Gemini Assistant](https://github.com/peterkrueck/mcp-gemini-assistant)
+- **Recommended**: MCP servers like [Context7](https://github.com/upstash/context7)
 
 #### Platform Support
 
@@ -131,24 +128,18 @@ The setup script will create the following structure in your project:
 ```
 your-project/
 ├── .claude/
-│   ├── commands/          # AI orchestration templates (.md files)
-│   ├── hooks/             # Automation scripts
-│   │   ├── config/        # Security patterns configuration
-│   │   ├── sounds/        # Notification sounds (if notifications enabled)
-│   │   └── *.sh           # Hook scripts (based on your selections)
-│   └── settings.local.json # Generated Claude Code configuration
+│   ├── commands/          # Command templates (.md files)
+│   └── settings.local.json # Generated Claude Code configuration (if Context7 selected)
 ├── docs/                  # Documentation templates and examples
 │   ├── ai-context/        # Core documentation files
 │   ├── open-issues/       # Issue tracking examples
 │   ├── specs/             # Specification templates
 │   ├── CONTEXT-tier2-component.md  # Component documentation template
 │   └── CONTEXT-tier3-feature.md    # Feature documentation template
-├── logs/                  # Hook execution logs (created at runtime)
 ├── CLAUDE.md              # Your project's AI context (from template)
-└── MCP-ASSISTANT-RULES.md # MCP coding standards (if Gemini-Assistant-MCP selected)
 ```
 
-**Note**: The exact files installed depend on your choices during setup (MCP servers, notifications, etc.)
+**Note**: The exact files installed depend on your choices during setup (MCP servers, etc.)
 
 ### Post-Installation Setup
 
@@ -156,9 +147,9 @@ your-project/
    - Edit `CLAUDE.md` with your project standards
    - Update `docs/ai-context/project-structure.md` with your tech stack
 
-2. **Install MCP servers** (if selected during setup):
+2. **Install MCP servers** (if Context7 selected during setup):
    - Follow the links provided by the installer
-   - Configure in `.claude/settings.local.json`
+   - Configure in your Claude Code settings
 
 3. **Test your installation**:
    ```bash
@@ -172,14 +163,12 @@ your-project/
 - **CLAUDE.md** - Master context files containing project-specific AI instructions, coding standards, and integration patterns
 - **CONTEXT.md** - Component and feature-level documentation files (Tier 2 and Tier 3) that provide specific implementation details and patterns
 - **MCP (Model Context Protocol)** - Standard for integrating external AI services with Claude Code
-- **Sub-agents** - Specialized AI agents spawned by Claude Code to work on specific aspects of a task in parallel
 - **3-Tier Documentation** - Hierarchical organization (Foundation/Component/Feature) that minimizes maintenance while maximizing AI effectiveness
 - **Auto-loading** - Automatic inclusion of relevant documentation when commands execute
-- **Hooks** - Shell scripts that execute at specific points in Claude Code's lifecycle for security, automation, and UX enhancements
 
 ## Architecture
 
-### Integrated Intelligence Loop
+### Context Management Architecture
 
 ```
                         CLAUDE CODE
@@ -188,28 +177,27 @@ your-project/
                    │    COMMANDS      │
                    │                 │
                    └────────┬────────┘
-                  Multi-agent│orchestration
-                   Parallel │execution
-                   Dynamic  │scaling
+                  Structured│workflows
+                   Context │loading
                            ╱│╲
                           ╱ │ ╲
-          Routes agents  ╱  │  ╲  Leverages
-          to right docs ╱   │   ╲ expertise
-                       ╱    │    ╲
-                      ▼     │     ▼
+        Auto-loads      ╱  │  ╲  Leverages
+        project docs  ╱   │   ╲ current docs
+                     ╱    │    ╲
+                    ▼     │     ▼
          ┌─────────────────┐│┌─────────────────┐
          │                 │││                 │
          │  DOCUMENTATION  │││  MCP SERVERS   │
          │                 │││                 │
          └─────────────────┘│└─────────────────┘
-          3-tier structure  │  Context7 + Gemini
-          Auto-loading      │  Real-time updates
-          Context routing   │  AI consultation
+          3-tier structure  │  Context7
+          Auto-loading      │  Real-time docs
+          Context routing   │  Current APIs
                       ╲     │     ╱
                        ╲    │    ╱
         Provides project╲   │   ╱ Enhances with
-        context for      ╲  │  ╱  current best
-        consultation      ╲ │ ╱   practices
+        context and      ╲  │  ╱  up-to-date
+        standards        ╲ │ ╱   information
                            ╲│╱
                             ▼
                     Integrated Workflow
@@ -225,14 +213,9 @@ Every command execution automatically loads critical documentation:
 @/docs/ai-context/docs-overview.md       # Documentation routing map
 ```
 
-The `subagent-context-injector.sh` hook extends auto-loading to all sub-agents:
-- Sub-agents spawned via the Task tool automatically receive the same core documentation
-- No manual context inclusion needed in Task prompts
-- Ensures consistent knowledge across all agents in multi-agent workflows
-
 This ensures:
-- Consistent AI behavior across all sessions and sub-agents
-- Zero manual context management at any level
+- Consistent AI behavior across all sessions
+- Zero manual context management
 
 ### Component Integration
 
@@ -243,28 +226,13 @@ This ensures:
 
 **Commands ↔️ MCP Servers**
 - Context7 provides up-to-date library documentation
-- Gemini offers architectural consultation for complex problems
 - Integration happens seamlessly within command workflows
 
 **Documentation ↔️ MCP Servers**
-- Project structure and MCP assistant rules auto-attach to Gemini consultations
-- Ensures external AI understands specific architecture and coding standards
+- Project structure automatically provides context to external services
+- Ensures external services understand specific architecture and coding standards
 - Makes all recommendations project-relevant and standards-compliant
 
-### Hooks Integration
-
-The kit includes battle-tested hooks that enhance Claude Code's capabilities:
-
-- **Security Scanner** - Prevents accidental exposure of secrets when using MCP servers
-- **Gemini Context Injector** - Automatically includes project structure in Gemini consultations
-- **Subagent Context Injector** - Ensures all sub-agents receive core documentation automatically
-- **Notification System** - Provides non-blocking audio feedback for task completion and input requests (optional)
-
-These hooks integrate seamlessly with the command and MCP server workflows, providing:
-- Pre-execution security checks for all external AI calls
-- Automatic context enhancement for both external AI and sub-agents
-- Consistent knowledge across all agents in multi-agent workflows
-- Developer awareness through pleasant, non-blocking audio notifications
 
 ## Common Tasks
 
@@ -276,9 +244,8 @@ These hooks integrate seamlessly with the command and MCP server workflows, prov
 
 The system:
 1. Auto-loads project documentation
-2. Spawns specialized agents (security, backend, frontend)
-3. Consults Context7 for authentication framework documentation
-4. Asks Gemini 2.5 pro for feedback and improvement suggestions
+2. Provides structured analysis workflow
+3. Consults Context7 for authentication framework documentation (if configured)
 4. Provides comprehensive analysis and implementation plan
 
 ### Code Review with Multiple Perspectives
@@ -287,7 +254,7 @@ The system:
 /code-review "review authentication implementation"
 ```
 
-Multiple agents analyze:
+Structured analysis covers:
 - Security vulnerabilities
 - Performance implications
 - Architectural alignment
@@ -312,15 +279,8 @@ After installation, you'll add your own project-specific documentation:
 ```
 your-project/
 ├── .claude/
-│   ├── commands/              # AI orchestration templates
-│   ├── hooks/                 # Security and automation hooks
-│   │   ├── config/            # Hook configuration files
-│   │   ├── sounds/            # Notification audio files
-│   │   ├── gemini-context-injector.sh
-│   │   ├── mcp-security-scan.sh
-│   │   ├── notify.sh
-│   │   └── subagent-context-injector.sh
-│   └── settings.json          # Claude Code configuration
+│   ├── commands/              # Command templates
+│   └── settings.json          # Claude Code configuration (if Context7 configured)
 ├── docs/
 │   ├── ai-context/            # Foundation documentation (Tier 1)
 │   │   ├── docs-overview.md   # Documentation routing map
@@ -332,7 +292,6 @@ your-project/
 │   ├── specs/                 # Feature specifications
 │   └── README.md              # Documentation system guide
 ├── CLAUDE.md                  # Master AI context (Tier 1)
-├── MCP-ASSISTANT-RULES.md     # MCP coding standards (if Gemini selected)
 ├── backend/
 │   ├── **`CONTEXT.md`**       # Backend context (Tier 2) - 🔴 create this
 │   └── src/api/
@@ -351,18 +310,16 @@ The framework provides templates for CONTEXT.md files in `docs/`:
 
 The kit is designed for adaptation:
 
-- **Commands** - Modify orchestration patterns in `.claude/commands/`
+- **Commands** - Modify workflow patterns in `.claude/commands/`
 - **Documentation** - Adjust tier structure for your architecture
-- **MCP Integration** - Add additional servers for specialized expertise
-- **Hooks** - Customize security patterns, add new hooks, or modify notifications in `.claude/hooks/`
-- **MCP Assistant Rules** - Copy `docs/MCP-ASSISTANT-RULES.md` template to project root and customize for project-specific standards
+- **MCP Integration** - Add additional servers for specialized functionality
 
 ## Best Practices
 
 1. **Let documentation guide development** - The 3-tier structure reflects natural boundaries
 2. **Update documentation immediately** - Use `/update-docs` after significant changes
 3. **Trust the auto-loading** - Avoid manual context management
-4. **Scale complexity naturally** - Simple tasks stay simple, complex tasks get sophisticated analysis
+4. **Use structured workflows** - Leverage commands for consistent task execution
 
 
 ## Documentation
@@ -370,8 +327,6 @@ The kit is designed for adaptation:
 - [Documentation System Guide](docs/) - Understanding the 3-tier architecture
 - [Commands Reference](commands/) - Detailed command usage
 - [MCP Integration](docs/CLAUDE.md) - Configuring external services
-- [Hooks System](hooks/) - Security scanning, context injection, and notifications
-- [Changelog](CHANGELOG.md) - Version history and migration guides
 
 ## Contributing
 
@@ -383,24 +338,21 @@ The kit represents one approach to AI-assisted development. Contributions and ad
 
 **A:** No, the installer detects existing files and prompts you to skip or overwrite each one. For safety, I highly recommend installing on a new Git branch. Safe is safe.
 
-**Q: Can I use this with other AI coding tools like Cursor, Cline, or Gemini CLI?**
+**Q: Can I use this with other AI coding tools like Cursor or Cline?**
 
-**A:** Partially. The documentation structure works with any tool (rename CLAUDE.md to match your tool's convention). However, commands are highly optimized for sub-agent usage and hooks are Claude Code-specific. Other tools would need significant adaptation of the orchestration features.
+**A:** Yes, the documentation structure works with any tool (rename CLAUDE.md to match your tool's convention). The command templates are optimized for Claude Code's workflow capabilities but can be adapted for other tools.
 
 **Q: How much will this cost in tokens?**
 
-**A:** This framework uses tokens heavily due to comprehensive context loading and sub-agent usage. I strongly recommend a Claude Code Max 20x subscription over pay-per-token API usage. The Claude 4 Opus model currently performs best for complex instruction following.
+**A:** This framework uses tokens due to comprehensive context loading. The structured documentation system helps optimize token usage by providing relevant context efficiently.
 
-**Q: Can I use other coding consultant MCPs like Zen instead for Gemini Consultation?**
-
-**A:** While technically possible, the templates and hooks are specifically configured and optimized for my Gemini MCP server (available through the link provided during installation). Using alternative coding consultant MCPs would require adjusting the templates, hooks, and potentially the command structures to match their specific interfaces and capabilities.
 
 **Q: Can I use this framework with an existing project?**
 
-**A:** Yes! The framework works well with existing projects. When installing, check if you already have a project structure or CLAUDE.md file and adjust accordingly during the setup prompts. To get started with an existing codebase, use Claude Code with sub-agents to understand your project and create the initial project-structure.md:
+**A:** Yes! The framework works well with existing projects. When installing, check if you already have a project structure or CLAUDE.md file and adjust accordingly during the setup prompts. To get started with an existing codebase, use Claude Code to analyze your project and create the initial project-structure.md:
 
 ```
-"Read and understand the project_structure.md template in docs/ai-context/project_structure.md. Your task is to fill out this template with our project's details. For this send out sub agents in parallel across the whole code base. Once the sub agents get back, ultrathink and create the markdown file."
+"Read and understand the project_structure.md template in docs/ai-context/project_structure.md. Your task is to fill out this template with our project's details by analyzing the codebase structure and creating the markdown file."
 ```
 
 After creating the project structure, use the framework's documentation generation system to create component-level and feature-level context files:
