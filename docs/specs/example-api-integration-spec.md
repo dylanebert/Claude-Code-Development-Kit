@@ -5,26 +5,30 @@
 This document outlines the integration with an external service API. This serves as a template for documenting API integration specifications.
 
 ### Integration Objectives
-- Connect to external service for data processing
-- Implement error handling and retry logic
-- Ensure secure API communication
-- Maintain performance and reliability
+
+-   Connect to external service for data processing
+-   Implement error handling and retry logic
+-   Ensure secure API communication
+-   Maintain performance and reliability
 
 ### External Service Details
-- **Service**: Example Data Processing API
-- **Version**: v2.1
-- **Authentication**: API Key + OAuth2
-- **Rate Limits**: 1000 requests/minute
-- **Documentation**: https://api.example.com/docs
+
+-   **Service**: Example Data Processing API
+-   **Version**: v2.1
+-   **Authentication**: API Key + OAuth2
+-   **Rate Limits**: 1000 requests/minute
+-   **Documentation**: https://api.example.com/docs
 
 ## Architecture
 
 ### Integration Flow
+
 ```
 Client Request → Input Validation → External API Call → Response Processing → Client Response
 ```
 
 ### Error Handling Flow
+
 ```
 API Error → Retry Logic → Fallback Strategy → Error Logging → Client Error Response
 ```
@@ -34,6 +38,7 @@ API Error → Retry Logic → Fallback Strategy → Error Logging → Client Err
 ### 1. API Client Implementation
 
 #### Configuration
+
 ```python
 # Configuration settings
 API_BASE_URL = "https://api.example.com/v2"
@@ -46,6 +51,7 @@ RETRY_DELAY = 1  # seconds
 ```
 
 #### Client Class
+
 ```python
 import aiohttp
 import asyncio
@@ -57,18 +63,18 @@ class ExternalAPIClient:
         self.base_url = base_url
         self.session: Optional[aiohttp.ClientSession] = None
         self.access_token: Optional[str] = None
-    
+
     async def __aenter__(self):
         self.session = aiohttp.ClientSession(
             timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)
         )
         await self.authenticate()
         return self
-    
+
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         if self.session:
             await self.session.close()
-    
+
     async def authenticate(self) -> None:
         """Authenticate with OAuth2 to get access token"""
         auth_url = f"{self.base_url}/oauth/token"
@@ -77,7 +83,7 @@ class ExternalAPIClient:
             "client_id": OAUTH_CLIENT_ID,
             "client_secret": OAUTH_CLIENT_SECRET
         }
-        
+
         async with self.session.post(auth_url, data=auth_data) as response:
             if response.status == 200:
                 auth_response = await response.json()
@@ -89,10 +95,11 @@ class ExternalAPIClient:
 ### 2. API Operations
 
 #### Data Processing Operation
+
 ```python
 async def process_data(
-    self, 
-    data: Dict[str, Any], 
+    self,
+    data: Dict[str, Any],
     options: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """Process data using external API"""
@@ -102,20 +109,20 @@ async def process_data(
         "X-API-Key": self.api_key,
         "Content-Type": "application/json"
     }
-    
+
     payload = {
         "data": data,
         "options": options or {}
     }
-    
+
     for attempt in range(MAX_RETRIES):
         try:
             async with self.session.post(
-                endpoint, 
-                json=payload, 
+                endpoint,
+                json=payload,
                 headers=headers
             ) as response:
-                
+
                 if response.status == 200:
                     return await response.json()
                 elif response.status == 429:
@@ -128,18 +135,19 @@ async def process_data(
                     continue
                 else:
                     response.raise_for_status()
-                    
+
         except aiohttp.ClientError as e:
             if attempt == MAX_RETRIES - 1:
                 raise ExternalAPIError(f"API request failed after {MAX_RETRIES} attempts: {str(e)}")
             await asyncio.sleep(RETRY_DELAY * (2 ** attempt))
-    
+
     raise ExternalAPIError("Maximum retry attempts exceeded")
 ```
 
 ### 3. Error Handling
 
 #### Custom Exceptions
+
 ```python
 class ExternalAPIError(Exception):
     """Base exception for external API errors"""
@@ -159,6 +167,7 @@ class APITimeoutError(ExternalAPIError):
 ```
 
 #### Error Response Mapping
+
 ```python
 def map_api_error(status_code: int, response_data: Dict[str, Any]) -> ExternalAPIError:
     """Map API error responses to custom exceptions"""
@@ -169,52 +178,57 @@ def map_api_error(status_code: int, response_data: Dict[str, Any]) -> ExternalAP
         500: ("Internal Server Error", ExternalAPIError),
         503: ("Service Unavailable", ExternalAPIError)
     }
-    
+
     error_message, exception_class = error_mapping.get(
-        status_code, 
+        status_code,
         (f"Unknown error (status: {status_code})", ExternalAPIError)
     )
-    
+
     # Include API error details if available
     if "error" in response_data:
         error_message += f": {response_data['error']}"
-    
+
     return exception_class(error_message)
 ```
 
 ## Implementation Plan
 
 ### Phase 1: Basic Integration (Week 1)
-- [ ] API client implementation
-- [ ] Authentication flow
-- [ ] Basic data processing endpoint
-- [ ] Error handling structure
-- [ ] Configuration management
+
+-   [ ] API client implementation
+-   [ ] Authentication flow
+-   [ ] Basic data processing endpoint
+-   [ ] Error handling structure
+-   [ ] Configuration management
 
 ### Phase 2: Advanced Features (Week 2)
-- [ ] Retry logic with exponential backoff
-- [ ] Rate limiting handling
-- [ ] Connection pooling
-- [ ] Response caching
-- [ ] Monitoring and logging
+
+-   [ ] Retry logic with exponential backoff
+-   [ ] Rate limiting handling
+-   [ ] Connection pooling
+-   [ ] Response caching
+-   [ ] Monitoring and logging
 
 ### Phase 3: Testing & Optimization (Week 3)
-- [ ] Unit tests for API client
-- [ ] Integration tests with mocked API
-- [ ] Performance testing
-- [ ] Error scenario testing
-- [ ] Documentation updates
+
+-   [ ] Unit tests for API client
+-   [ ] Integration tests with mocked API
+-   [ ] Performance testing
+-   [ ] Error scenario testing
+-   [ ] Documentation updates
 
 ### Phase 4: Production Deployment (Week 4)
-- [ ] Production configuration
-- [ ] Monitoring setup
-- [ ] Performance optimization
-- [ ] Security audit
-- [ ] Deployment and rollout
+
+-   [ ] Production configuration
+-   [ ] Monitoring setup
+-   [ ] Performance optimization
+-   [ ] Security audit
+-   [ ] Deployment and rollout
 
 ## API Endpoints
 
 ### Process Data
+
 ```http
 POST /api/external/process
 Content-Type: application/json
@@ -233,6 +247,7 @@ Authorization: Bearer {access_token}
 ```
 
 **Response:**
+
 ```json
 {
     "success": true,
@@ -248,12 +263,14 @@ Authorization: Bearer {access_token}
 ```
 
 ### Get Processing Status
+
 ```http
 GET /api/external/status/{request_id}
 Authorization: Bearer {access_token}
 ```
 
 **Response:**
+
 ```json
 {
     "request_id": "req_abc123",
@@ -270,40 +287,47 @@ Authorization: Bearer {access_token}
 ## Performance Considerations
 
 ### Connection Management
-- Use connection pooling for multiple requests
-- Implement connection timeouts
-- Monitor connection health
+
+-   Use connection pooling for multiple requests
+-   Implement connection timeouts
+-   Monitor connection health
 
 ### Caching Strategy
-- Cache authentication tokens
-- Cache frequently requested data
-- Implement cache invalidation
+
+-   Cache authentication tokens
+-   Cache frequently requested data
+-   Implement cache invalidation
 
 ### Rate Limiting
-- Implement client-side rate limiting
-- Queue requests during rate limit periods
-- Monitor rate limit status
+
+-   Implement client-side rate limiting
+-   Queue requests during rate limit periods
+-   Monitor rate limit status
 
 ## Security Considerations
 
 ### Authentication
-- Secure storage of API keys and secrets
-- Token refresh mechanism
-- Regular credential rotation
+
+-   Secure storage of API keys and secrets
+-   Token refresh mechanism
+-   Regular credential rotation
 
 ### Data Protection
-- Encrypt sensitive data in transit
-- Validate all input data
-- Sanitize API responses
+
+-   Encrypt sensitive data in transit
+-   Validate all input data
+-   Sanitize API responses
 
 ### Monitoring
-- Log all API interactions
-- Monitor for suspicious activity
-- Track error rates and patterns
+
+-   Log all API interactions
+-   Monitor for suspicious activity
+-   Track error rates and patterns
 
 ## Testing Strategy
 
 ### Unit Tests
+
 ```python
 import pytest
 from unittest.mock import AsyncMock, patch
@@ -314,31 +338,34 @@ async def test_successful_data_processing():
         mock_response = AsyncMock()
         mock_response.status = 200
         mock_response.json.return_value = {"result": "processed"}
-        
+
         mock_session.return_value.__aenter__.return_value.post.return_value.__aenter__.return_value = mock_response
-        
+
         client = ExternalAPIClient("test-key", "https://api.test.com")
         result = await client.process_data({"input": "test"})
-        
+
         assert result["result"] == "processed"
 ```
 
 ### Integration Tests
-- Test with actual API endpoints (staging environment)
-- Test error scenarios and recovery
-- Test rate limiting behavior
-- Test authentication flow
+
+-   Test with actual API endpoints (staging environment)
+-   Test error scenarios and recovery
+-   Test rate limiting behavior
+-   Test authentication flow
 
 ## Monitoring and Logging
 
 ### Metrics to Track
-- Request success/failure rates
-- Response times
-- Rate limit status
-- Authentication failures
-- Error distribution
+
+-   Request success/failure rates
+-   Response times
+-   Rate limit status
+-   Authentication failures
+-   Error distribution
 
 ### Logging Format
+
 ```json
 {
     "timestamp": "2024-01-15T10:30:00Z",
@@ -356,6 +383,7 @@ async def test_successful_data_processing():
 ## Configuration
 
 ### Environment Variables
+
 ```bash
 # External API Configuration
 EXTERNAL_API_BASE_URL=https://api.example.com/v2
@@ -376,22 +404,23 @@ REDIS_URL=redis://localhost:6379
 ## Related Files
 
 After implementation, update this list with actual file paths:
-- `src/integrations/external_api.py` - Main API client
-- `src/integrations/exceptions.py` - Custom exceptions
-- `src/api/routes/external.py` - Integration endpoints
-- `tests/test_external_api.py` - Integration tests
-- `config/external_api.py` - Configuration settings
+
+-   `src/integrations/external_api.py` - Main API client
+-   `src/integrations/exceptions.py` - Custom exceptions
+-   `src/api/routes/external.py` - Integration endpoints
+-   `tests/test_external_api.py` - Integration tests
+-   `config/external_api.py` - Configuration settings
 
 ## Success Criteria
 
-- [ ] All API operations functional
-- [ ] Error handling robust
-- [ ] Performance requirements met
-- [ ] Security requirements satisfied
-- [ ] Monitoring and logging implemented
-- [ ] Tests passing (unit and integration)
-- [ ] Documentation complete
+-   [ ] All API operations functional
+-   [ ] Error handling robust
+-   [ ] Performance requirements met
+-   [ ] Security requirements satisfied
+-   [ ] Monitoring and logging implemented
+-   [ ] Tests passing (unit and integration)
+-   [ ] Documentation complete
 
 ---
 
-*This API integration specification template provides a comprehensive approach to documenting external service integrations. Customize based on your specific API requirements and integration needs.*
+_This API integration specification template provides a comprehensive approach to documenting external service integrations. Customize based on your specific API requirements and integration needs._

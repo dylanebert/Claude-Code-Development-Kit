@@ -18,32 +18,35 @@ These foundation files ensure you always have the essential context needed to un
 
 Standard documentation approaches create friction for AI-assisted development:
 
-- **Context Overload** - Must process entire documentation sets for simple tasks
-- **Maintenance Burden** - Every code change cascades to multiple documentation locations
-- **Stale Content** - Documentation diverges from implementation reality
-- **No AI Optimization** - Human-readable formats lack structure for machine processing
+-   **Context Overload** - Must process entire documentation sets for simple tasks
+-   **Maintenance Burden** - Every code change cascades to multiple documentation locations
+-   **Stale Content** - Documentation diverges from implementation reality
+-   **No AI Optimization** - Human-readable formats lack structure for machine processing
 
 ### The 3-Tier Solution
 
 The kit solves these problems through hierarchical organization:
 
 **Tier 1: Foundation (Rarely Changes)**
-- Project-wide standards, architecture decisions, technology stack
-- Auto-loads for every session
-- Provides consistent baseline without redundancy
-- Uses CLAUDE.md as the master context file
+
+-   Project-wide standards, architecture decisions, technology stack
+-   Auto-loads for every session
+-   Provides consistent baseline without redundancy
+-   Uses CLAUDE.md as the master context file
 
 **Tier 2: Component (Occasionally Changes)**
-- Component boundaries, architectural patterns, integration points
-- Loads only when working within specific components
-- Isolates architectural decisions from implementation details
-- Uses CONTEXT.md files at component roots
+
+-   Component boundaries, architectural patterns, integration points
+-   Loads only when working within specific components
+-   Isolates architectural decisions from implementation details
+-   Uses CONTEXT.md files at component roots
 
 **Tier 3: Feature (Frequently Changes)**
-- Implementation specifics, technical details, local patterns
-- Co-located with code for immediate updates
-- Minimizes documentation cascade when code changes
-- Uses CONTEXT.md files within feature directories
+
+-   Implementation specifics, technical details, local patterns
+-   Co-located with code for immediate updates
+-   Minimizes documentation cascade when code changes
+-   Uses CONTEXT.md files within feature directories
 
 ## Benefits vs Traditional Systems
 
@@ -53,9 +56,10 @@ The kit solves these problems through hierarchical organization:
 **3-Tier**: Commands load only relevant tiers based on complexity
 
 Example:
-- Simple query → Tier 1 only (minimal tokens)
-- Component work → Tier 1 + relevant Tier 2
-- Deep implementation → All relevant tiers
+
+-   Simple query → Tier 1 only (minimal tokens)
+-   Component work → Tier 1 + relevant Tier 2
+-   Deep implementation → All relevant tiers
 
 ### 2. Maintenance Efficiency
 
@@ -63,9 +67,10 @@ Example:
 **3-Tier**: Updates isolated to appropriate tier
 
 Example:
-- API endpoint change → Update only Tier 3 API documentation
-- New component → Add Tier 2 documentation, Tier 1 unchanged
-- Coding standard → Update only Tier 1, applies everywhere
+
+-   API endpoint change → Update only Tier 3 API documentation
+-   New component → Add Tier 2 documentation, Tier 1 unchanged
+-   Coding standard → Update only Tier 1, applies everywhere
 
 ### 3. AI Performance Optimization
 
@@ -73,9 +78,10 @@ Example:
 **3-Tier**: Structured hierarchy guides to precise context
 
 The system provides:
-- Clear routing logic for navigation
-- Predictable documentation locations
-- Efficient context usage through targeted loading
+
+-   Clear routing logic for navigation
+-   Predictable documentation locations
+-   Efficient context usage through targeted loading
 
 ## Integration with Kit Components
 
@@ -95,72 +101,83 @@ Command Execution → Analyze Task Complexity → Load Appropriate Tiers
 
 External services receive proper context through the tier system:
 
-- **Context7 Lookups** - Happen within established project context
-- **Recommendations** - Align with documented architecture
+-   **Context7 Lookups** - Happen within established project context
+-   **Recommendations** - Align with documented architecture
 
 ## Key Files and Their Roles
 
 ### Foundation Files (ai-context/)
 
 **docs-overview.md**
-- Template for implementing 3-tier documentation
-- Maps documentation structure for AI navigation
-- [View Template](ai-context/docs-overview.md)
+
+-   Template for implementing 3-tier documentation
+-   Maps documentation structure for AI navigation
+-   [View Template](ai-context/docs-overview.md)
 
 **project-structure.md**
-- Complete technology stack and file organization
-- Essential context for understanding the project
-- [View Template](ai-context/project-structure.md)
+
+-   Complete technology stack and file organization
+-   Essential context for understanding the project
+-   [View Template](ai-context/project-structure.md)
 
 **system-integration.md**
-- Cross-component communication patterns
-- Integration architectures and patterns
-- [View Template](ai-context/system-integration.md)
+
+-   Cross-component communication patterns
+-   Integration architectures and patterns
+-   [View Template](ai-context/system-integration.md)
 
 **deployment-infrastructure.md**
-- Infrastructure patterns and constraints
-- Deployment context for AI recommendations
-- [View Template](ai-context/deployment-infrastructure.md)
+
+-   Infrastructure patterns and constraints
+-   Deployment context for AI recommendations
+-   [View Template](ai-context/deployment-infrastructure.md)
 
 **handoff.md**
-- Session continuity between interactions
-- Task state preservation
-- [View Template](ai-context/handoff.md)
+
+-   Session continuity between interactions
+-   Task state preservation
+-   [View Template](ai-context/handoff.md)
 
 ### Context Templates
 
 **CLAUDE.md** (Tier 1)
-- Master context with coding standards
-- Project-wide instructions and patterns
-- [View Template](CLAUDE.md)
+
+-   Master context with coding standards
+-   Project-wide instructions and patterns
+-   [View Template](CLAUDE.md)
 
 **CONTEXT-tier2-component.md**
-- Component-level architectural context
-- [View Template](CONTEXT-tier2-component.md)
+
+-   Component-level architectural context
+-   [View Template](CONTEXT-tier2-component.md)
 
 **CONTEXT-tier3-feature.md**
-- Feature-specific implementation details
-- [View Template](CONTEXT-tier3-feature.md)
+
+-   Feature-specific implementation details
+-   [View Template](CONTEXT-tier3-feature.md)
 
 ## Implementation Strategy
 
 ### 1. Start with Templates
 
 Use provided templates as foundation:
-- Copy and customize for your project
-- Maintain consistent structure
-- Focus on clear, structured formatting
+
+-   Copy and customize for your project
+-   Maintain consistent structure
+-   Focus on clear, structured formatting
 
 ### 2. Follow Natural Boundaries
 
 Let your architecture guide tier placement:
-- Stable decisions → Tier 1
-- Component design → Tier 2
-- Implementation details → Tier 3
+
+-   Stable decisions → Tier 1
+-   Component design → Tier 2
+-   Implementation details → Tier 3
 
 ### 3. Co-locate Documentation
 
 Place CONTEXT.md files with related code:
+
 ```
 backend/
 ├── CONTEXT.md         # Backend architecture (Tier 2)
@@ -172,15 +189,17 @@ backend/
 ### 4. Maintain Hierarchy
 
 Ensure clear relationships:
-- Tier 3 references Tier 2 patterns
-- Tier 2 follows Tier 1 standards
-- No circular dependencies
+
+-   Tier 3 references Tier 2 patterns
+-   Tier 2 follows Tier 1 standards
+-   No circular dependencies
 
 ### 5. Use Documentation Commands
 
 The kit provides commands to manage documentation:
-- **`/create-docs`** - Generate initial documentation structure for projects without existing docs
-- **`/update-docs`** - Regenerate and update documentation after code changes to keep everything current
+
+-   **`/create-docs`** - Generate initial documentation structure for projects without existing docs
+-   **`/update-docs`** - Regenerate and update documentation after code changes to keep everything current
 
 ## Measuring Success
 
@@ -194,4 +213,4 @@ The 3-tier system succeeds when:
 
 ---
 
-*Part of the Claude Code Development Kit - see [main documentation](../README.md) for complete system overview.*
+_Part of the Claude Code Development Kit - see [main documentation](../README.md) for complete system overview._

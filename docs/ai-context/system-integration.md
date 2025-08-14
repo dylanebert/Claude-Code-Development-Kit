@@ -5,12 +5,13 @@ This document contains cross-component integration patterns and system-wide arch
 ## Purpose
 
 This template serves as a placeholder for documenting:
-- Cross-component communication patterns
-- Data flow architectures between services
-- Integration strategies with external systems
-- Performance optimization patterns
-- Testing strategies for integrated systems
-- Error handling across service boundaries
+
+-   Cross-component communication patterns
+-   Data flow architectures between services
+-   Integration strategies with external systems
+-   Performance optimization patterns
+-   Testing strategies for integrated systems
+-   Error handling across service boundaries
 
 ## Implementation Note
 
@@ -18,4 +19,4 @@ Replace this template with your actual system integration documentation as your 
 
 ---
 
-*Customize this template based on your specific integration patterns and architectural requirements.*
+_Customize this template based on your specific integration patterns and architectural requirements._
