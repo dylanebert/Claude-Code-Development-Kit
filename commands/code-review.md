@@ -1,28 +1,28 @@
 # /code-review
 
-_Performs focused code review that surfaces only critical, high-impact findings for solo developers._
+_Performs focused code review that identifies consolidation opportunities and promotes lean, maintainable code._
 
 ## Core Philosophy
 
-This command prioritizes **needle-moving discoveries** over exhaustive lists. Every finding must demonstrate significant impact on:
+This command prioritizes **code leanness and simplification** over exhaustive analysis. Every finding must demonstrate significant impact on:
 
--   System reliability & stability
--   Security vulnerabilities with real exploitation risk
--   Performance bottlenecks affecting user experience
--   Architectural decisions blocking future scalability
--   Critical technical debt threatening maintainability
+-   Code consolidation and deduplication opportunities
+-   Complexity reduction and simplification potential
+-   Dead code elimination and unused export removal
+-   Over-engineering and unnecessary abstraction detection
+-   Architectural simplification and dependency reduction
 
-### 🚨 Critical Findings Only
+### 🧹 Consolidation Focus
 
-Issues that could cause production failures, security breaches, or severe user impact within 48 hours.
+Duplicate patterns, repetitive logic, and extractable utilities that could reduce codebase size by >20%.
 
-### 🔥 High-Value Improvements
+### 📉 Simplification Priority
 
-Changes that unlock new capabilities, remove significant constraints, or improve metrics by >25%.
+Over-engineered solutions, unnecessary abstractions, and verbose implementations that violate KISS principles.
 
 ### ❌ Excluded from Reports
 
-Minor style issues, micro-optimizations (<10%), theoretical best practices, edge cases affecting <1% of users.
+Minor style issues, micro-optimizations (<10%), theoretical best practices, perfect abstraction patterns.
 
 ## Auto-Loaded Project Context:
 
@@ -65,67 +65,74 @@ Every code review MUST systematically analyze these core areas:
 
 #### 🎯 Mandatory Coverage Areas:
 
-1. **Critical Path Analysis**
+1. **Code Consolidation Analysis**
 
-    - User-facing functionality that could break
-    - Data integrity and state management
-    - Error handling and recovery mechanisms
+    - Duplicate code blocks and repeated patterns
+    - Similar functions that could be merged
+    - Extractable shared utilities and constants
+    - Repetitive error handling or validation logic
 
-2. **Security Surface**
+2. **Complexity Assessment**
 
-    - Input validation and sanitization
-    - Authentication/authorization flows
-    - Data exposure and API security
+    - Over-engineered implementations of simple problems
+    - Unnecessary abstraction layers and indirection
+    - Verbose code that could be simplified
+    - Cyclomatic complexity exceeding reasonable thresholds
 
-3. **Performance Impact**
+3. **Dead Code Detection**
 
-    - Real-time processing bottlenecks
-    - Resource consumption (memory, CPU)
-    - Scalability constraints
+    - Unused exports and orphaned files
+    - Unreachable code paths and dead branches
+    - Commented-out code accumulation
+    - Obsolete features and deprecated patterns
 
-4. **Integration Points**
-    - API contracts and boundaries
-    - Service dependencies
-    - External system interactions
+4. **Architecture Simplification**
+    - Mixed concerns and god objects
+    - Circular dependencies and coupling issues
+    - Overly complex inheritance hierarchies
+    - Unnecessary service layers or facades
 
 ### Step 3: Systematic Review Execution
 
 **Before starting analysis, pause and think deeply:**
 
--   What are the real risks in this code?
--   Which areas could cause the most damage if they fail?
--   Where would a solo developer need the most help?
+-   Where is the code unnecessarily complex or verbose?
+-   What patterns are repeated that could be consolidated?
+-   Which abstractions add no value and only increase complexity?
+-   What code could be eliminated without impact?
 
 Execute systematic analysis across all coverage areas:
 
 ```
 For each coverage area:
-  1. Review auto-loaded project context
-  2. Analyze the area with deep focus
-  3. For complex issues, consider:
-     - mcp__context7__get-library-docs for framework best practices
-     - External research for current security practices
-  4. Cross-reference with other areas for systemic issues
-  5. Document ONLY high-impact findings:
+  1. Review auto-loaded project context and KISS/YAGNI/DRY principles
+  2. Analyze the area for consolidation and simplification opportunities
+  3. For patterns and best practices, consider:
+     - mcp__context7__get-library-docs for simpler framework patterns
+     - Research on reducing complexity and technical debt
+  4. Cross-reference to find systemic duplication patterns
+  5. Document ONLY high-impact consolidation opportunities:
 
      ## [Coverage_Area] Analysis
 
-     ### 🚨 Critical Issues (Production Risk)
-     - Issue: [description]
-     - Location: [file:line_number]
-     - Impact: [quantified - downtime hours, users affected, data at risk]
-     - Fix: [specific code snippet]
-     - Consequence if ignored: [what happens in 48 hours]
+     ### 🧹 Consolidation Opportunities
+     - Pattern: [duplicated pattern description]
+     - Locations: [file:line_number references]
+     - Lines saved: [estimated reduction]
+     - Solution: [specific consolidation approach]
+     - ROI: [maintenance hours saved/month]
 
-     ### 🎯 Strategic Improvements (Capability Unlocks)
-     - Limitation: [what's currently blocked]
-     - Solution: [architectural change or implementation]
-     - Unlocks: [new capability or scale]
-     - ROI: [effort hours vs benefit quantified]
+     ### 📉 Complexity Reduction
+     - Current: [complex implementation]
+     - Simplified: [proposed simpler solution]
+     - Complexity score: [before] → [after]
+     - Readability improvement: [quantified]
 
-     ### ⚡ Quick Wins (Optional)
-     - Only include if <2 hours for >20% improvement
-     - Must show measurable impact
+     ### 🗑️ Elimination Candidates
+     - Dead code: [what can be removed]
+     - Impact: [none/minimal]
+     - Lines removed: [count]
+     - Dependencies cleaned: [count]
 ```
 
 ### Step 4: Synthesize Findings
@@ -134,104 +141,114 @@ After completing systematic analysis:
 
 1. **Filter for Impact**
 
-    - Discard all low-priority findings
-    - Quantify real-world impact of each issue
-    - Focus on production risks and capability unlocks
+    - Focus on consolidations saving >30 lines
+    - Prioritize complexity reductions >25%
+    - Highlight dead code eliminating entire files
+    - Quantify maintenance time savings
 
 2. **Pattern Analysis**
 
-    - Identify systemic issues vs isolated problems
-    - Find root causes across the review
-    - Detect subtle security vulnerabilities
+    - Identify systemic duplication patterns
+    - Find common over-engineering anti-patterns
+    - Detect accumulation of technical debt
+    - Map dependency tangles and circular references
 
 3. **Strategic Prioritization**
-    - Calculate ROI for each improvement
-    - Consider solo developer constraints
-    - Create actionable fix sequence
+    - Calculate lines of code reduction potential
+    - Estimate complexity score improvements
+    - Consider effort vs. simplification gained
+    - Create consolidation roadmap
 
 ### Step 5: Present Comprehensive Review
 
 Structure the final output as:
 
 ```markdown
-# 🔍 Code Review Report
+# 🔍 Code Review Report: Lean Code Analysis
 
 ## Executive Summary
 
-[High-level findings and overall assessment]
+[High-level findings focused on consolidation potential]
 
--   Security Risk Level: [Critical/High/Medium/Low]
--   Performance Impact: [description]
--   Technical Debt: [assessment]
--   Overall Quality Score: [A-F grade with justification]
+-   Code Reduction Potential: [X lines / Y%]
+-   Complexity Score: [Current → Proposed]
+-   Files Eliminatable: [count]
+-   Maintenance Savings: [hours/month]
 
-## 🚨 Production Risks (Fix Within 48 Hours)
+## 🧹 Major Consolidation Opportunities
 
-[Only issues that could cause downtime, data loss, or security breaches]
+[Duplicate patterns that can be extracted into shared utilities]
 
-## 🎯 Strategic Improvements (High ROI)
+## 📉 Complexity Reduction Targets
 
-[Only changes that unlock capabilities or improve metrics >25%]
+[Over-engineered code that can be simplified significantly]
 
-## ⚡ Quick Wins (Optional)
+## 🗑️ Dead Code Elimination
 
-[Only if <2 hours effort for significant improvement]
+[Unused code, files, and exports that can be removed]
+
+## ⚡ Quick Wins (<2 hours, >20% improvement)
+
+[Simple changes with high impact on code leanness]
 
 ## Detailed Analysis
 
-### Security Assessment
+### Code Duplication Assessment
 
-[Detailed security findings]
+[Specific duplicate patterns with file:line references]
 
-### Performance Analysis
+### Complexity Analysis
 
-[Detailed performance findings]
+[Verbose or over-engineered implementations]
 
-### Architecture Review
+### Architecture Simplification
 
-[Detailed architecture findings]
+[Unnecessary abstractions and coupling issues]
 
-### Code Quality Evaluation
+### Dependency Optimization
 
-[Detailed quality findings]
+[Circular dependencies and unnecessary imports]
 
-## Action Plan
+## Consolidation Roadmap
 
-1. Critical fixes preventing production failures
-2. High-ROI improvements unlocking capabilities
+1. Extract shared utilities from duplicate patterns
+2. Simplify over-engineered components
+3. Remove dead code and unused exports
+4. Flatten unnecessary hierarchies
 
 ## Impact Matrix
 
-| Issue                                             | User Impact | Effort | ROI |
-| ------------------------------------------------- | ----------- | ------ | --- |
-| [Only high-impact issues with quantified metrics] |
+| Finding                                    | Lines Saved | Complexity Reduction | Effort | Priority |
+| ------------------------------------------ | ----------- | -------------------- | ------ | -------- |
+| [Consolidation opportunities with metrics] |
 ```
 
 ### Step 6: Interactive Follow-up
 
 After presenting the review, offer:
 
--   "Would you like me to fix any of the critical issues?"
--   "Should I create a detailed refactoring plan for any component?"
--   "Do you want me to generate tests for uncovered code?"
+-   "Would you like me to consolidate any of the duplicate patterns?"
+-   "Should I simplify the over-engineered components?"
+-   "Do you want me to remove the identified dead code?"
+-   "Should I create a refactoring plan for the complex areas?"
 
 ## Implementation Notes
 
 1. **Include file:line_number references** for easy navigation
-2. **Balance criticism with recognition** of good practices
-3. **Provide actionable fixes**, not just problem identification
-4. **Consider project phase** and priorities when recommending changes
-5. **Keep security findings sensitive** - don't expose vulnerabilities publicly
+2. **Quantify consolidation opportunities** in concrete terms (lines saved, files removed)
+3. **Provide specific refactoring patterns**, not just identification
+4. **Follow KISS, YAGNI, DRY principles** from the project's CLAUDE.md
+5. **Focus on maintainability** over theoretical perfection
 
 ## Coverage Verification
 
 Before presenting results, verify complete coverage:
 
 ```
-☑ Critical Path Analysis: [Covered]
-☑ Security Surface: [Covered]
-☑ Performance Impact: [Covered]
-☑ Integration Points: [Covered]
+☑ Code Consolidation Analysis: [Covered]
+☑ Complexity Assessment: [Covered]
+☑ Dead Code Detection: [Covered]
+☑ Architecture Simplification: [Covered]
 ```
 
 If any area lacks coverage, conduct additional focused analysis.
